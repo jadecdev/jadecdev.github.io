@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
         renderPairwiseTable(pairwiseMatrix);
         
         // Déterminer le vainqueur de Condorcet
-        const winner = ](pairwiseMatrix);
+        const winner = (pairwiseMatrix);
         
         // Afficher le vainqueur
         if (winner) {
