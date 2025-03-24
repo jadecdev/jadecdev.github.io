@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote de Condorcet</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Système de Vote de Condorcet</h1>
+        
+        <div id="setup-section" class="section">
+            <h2>Configuration du vote</h2>
+            <div class="input-group">
+                <input type="text" id="candidate-input" placeholder="Nom du candidat">
+                <button id="add-candidate">Ajouter un candidat</button>
+            </div>
+            <div id="candidates-list" class="list-container">
+                <h3>Candidats :</h3>
+                <ul id="candidates"></ul>
+            </div>
+            <button id="start-vote" class="primary-button">Commencer le vote</button>
+        </div>
+        
+        <div id="voting-section" class="section hidden">
+            <h2>Voter</h2>
+            <p>Glissez-déposez les candidats pour les classer par ordre de préférence (du plus préféré au moins préféré)</p>
+            <div id="voter-name-container">
+                <input type="text" id="voter-name" placeholder="Votre nom (optionnel)">
+            </div>
+            <div id="ranking-container" class="list-container">
+                <ul id="ranking" class="sortable"></ul>
+            </div>
+            <button id="submit-vote" class="primary-button">Soumettre mon vote</button>
+        </div>
+        
+        <div id="results-section" class="section hidden">
+            <h2>Résultats</h2>
+            <button id="compute-results" class="primary-button">Calculer les résultats</button>
+            <div id="results-container">
+                <div id="pairwise-results" class="results-box">
+                    <h3>Duels</h3>
+                    <table id="pairwise-table"></table>
+                </div>
+                <div id="winner-container" class="results-box">
+                    <h3>Vainqueur de Condorcet</h3>
+                    <p id="winner-text"></p>
+                </div>
+                <div id="rankings-container" class="results-box">
+                    <h3>Classement final</h3>
+                    <ol id="final-ranking"></ol>
+                </div>
+            </div>
+            <button id="new-vote" class="secondary-button">Nouveau vote</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
