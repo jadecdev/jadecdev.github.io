@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
         renderPairwiseTable(pairwiseMatrix);
         
         // Déterminer le vainqueur de Condorcet
-        const winner = (pairwiseMatrix);
+        const winner = findCondorcetWinner(pairwiseMatrix);
         
         // Afficher le vainqueur
         if (winner) {
@@ -215,6 +215,143 @@ document.addEventListener('DOMContentLoaded', function() {
         
         candidates.forEach(candidate => {
             const th = document.createElement('th');
-        })
-    }
+            th.textContent = candidate;
+            headerRow.appendChild(th);
+        });
+        
+        thead.appendChild(headerRow);
+        pairwiseTable.appendChild(thead);
+        
+        // Créer le corps du tableau
+        const tbody = document.createElement('tbody');
+        
+        candidates.forEach(candidate1 => {
+            const row = document.createElement('tr');
             
+            const rowHeader = document.createElement('th');
+            rowHeader.textContent = candidate1;
+            row.appendChild(rowHeader);
+            
+            candidates.forEach(candidate2 => {
+                const cell = document.createElement('td');
+                
+                if (candidate1 === candidate2) {
+                    cell.textContent = '-';
+                } else {
+                    const wins = matrix[candidate1][candidate2] || 0;
+                    const losses = matrix[candidate2][candidate1] || 0;
+                    cell.textContent = `${wins} - ${losses}`;
+                    
+                    if (wins > losses) {
+                        cell.classList.add('winner');
+                    }
+                }
+                
+                row.appendChild(cell);
+            });
+            
+            tbody.appendChild(row);
+        });
+        
+        pairwiseTable.appendChild(tbody);
+    }
+    
+    // Trouver le vainqueur de Condorcet
+    function findCondorcetWinner(matrix) {
+        for (const candidate1 of candidates) {
+            let isWinner = true;
+            
+            for (const candidate2 of candidates) {
+                if (candidate1 !== candidate2) {
+                    const wins = matrix[candidate1][candidate2] || 0;
+                    const losses = matrix[candidate2][candidate1] || 0;
+                    
+                    if (wins <= losses) {
+                        isWinner = false;
+                        break;
+                    }
+                }
+            }
+            
+            if (isWinner) {
+                return candidate1;
+            }
+        }
+        
+        return null;
+    }
+    
+    // Calculer le classement selon la méthode de Schulze
+    function calculateSchulzeRanking(matrix) {
+        // Créer la matrice des chemins les plus forts
+        const paths = {};
+        candidates.forEach(candidate1 => {
+            paths[candidate1] = {};
+            candidates.forEach(candidate2 => {
+                if (candidate1 !== candidate2) {
+                    const wins = matrix[candidate1][candidate2] || 0;
+                    const losses = matrix[candidate2][candidate1] || 0;
+                    
+                    if (wins > losses) {
+                        paths[candidate1][candidate2] = wins;
+                    } else {
+                        paths[candidate1][candidate2] = 0;
+                    }
+                }
+            });
+        });
+        
+        // Calculer les chemins les plus forts
+        candidates.forEach(i => {
+            candidates.forEach(j => {
+                if (i !== j) {
+                    candidates.forEach(k => {
+                        if (i !== k && j !== k) {
+                            paths[j][k] = Math.max(
+                                paths[j][k],
+                                Math.min(paths[j][i], paths[i][k])
+                            );
+                        }
+                    });
+                }
+            });
+        });
+        
+        // Déterminer le classement
+        const ranking = [...candidates];
+        ranking.sort((a, b) => {
+            if (a === b) return 0;
+            
+            if (paths[a][b] > paths[b][a]) {
+                return -1;
+            } else if (paths[a][b] < paths[b][a]) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+        
+        return ranking;
+    }
+    
+    // Afficher le classement final
+    function renderFinalRanking(ranking) {
+        finalRanking.innerHTML = '';
+        
+        ranking.forEach(candidate => {
+            const li = document.createElement('li');
+            li.textContent = candidate;
+            finalRanking.appendChild(li);
+        });
+    }
+    
+    // Nouveau vote
+    newVoteBtn.addEventListener('click', function() {
+        votes = [];
+        resultsSection.classList.add('hidden');
+        setupSection.classList.remove('hidden');
+        pairwiseTable.innerHTML = '';
+        winnerText.textContent = '';
+        finalRanking.innerHTML = '';
+    });
+});
